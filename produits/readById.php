@@ -25,7 +25,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         $produit->id = $donnees->id;
 
         // On récupère le produit
-        $produit->readById($id);
+        $produit->readById();
 
         // On vérifie si le produit existe
         if($produit->code != null){
@@ -36,14 +36,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 "description" => $produit->description,
                 "price" => $produit->price,
                 "category_id" => $produit->category_id,
-                "satut_id" => $produit->satut_id,
+                "statut_id" => $produit->statut_id,
                 "supplier_id" => $produit->supplier_id,
-                "purchase_id" => $produit->purchase_id,
+                "purchase_date" => $produit->purchase_date,
                 "expiration_date" => $produit->expiration_date
             ];
             // On envoie le code réponse 200 OK
             http_response_code(200);
-
             // On encode en json et on envoie
             echo json_encode($prod);
         }else{
@@ -52,7 +51,6 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
             echo json_encode(array("message" => "Le produit n'existe pas."));
         }
-        
     }
 }else{
     // On gère l'erreur

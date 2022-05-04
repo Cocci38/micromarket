@@ -53,26 +53,27 @@ class Produits{
 
     public function read()
     {
-        $stmt = $this->conn->prepare("SELECT * From produits");
+        $stmt = $this->conn->prepare("SELECT * FROM produits");
         $stmt->execute();
         return $stmt; // Il n'a pas de fetch, il sera effectué dans le fichier de l'Api (read.php)
     }
 
-    public function readById(int $id)
+    public function readById()
     {
-        $stmt = $this->conn->prepare("SELECT * From produits WHERE id = ?", [$id]);
+        $stmt = $this->conn->prepare("SELECT * FROM produits WHERE id = ?");
+        $stmt->bindParam(1, $this->id);
         $stmt->execute();
-        return $stmt;
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Hydradation
-        // $this->code = $result['code'];
-        // $this->description = $result['description'];
-        // $this->price = $result['price'];
-        // $this->category_id = $result['category_id'];
-        // $this->statut_id = $result['statut_id'];
-        // $this->supplier_id = $result['supplier_id'];
-        // $this->purchase_date = $result['purchase_date'];
-        // $this->expiration_date = $result['expiration_date'];
+        $this->code = $result['code'];
+        $this->description = $result['description'];
+        $this->price = $result['price'];
+        $this->category_id = $result['category_id'];
+        $this->statut_id = $result['statut_id'];
+        $this->supplier_id = $result['supplier_id'];
+        $this->purchase_date = $result['purchase_date'];
+        $this->expiration_date = $result['expiration_date'];
     }
 
     public function update()
