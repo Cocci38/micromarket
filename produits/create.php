@@ -33,12 +33,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     // On lit la liste des produits puis créer le tableau json
     // On vérifie qu'on a bien toutes les données
-    if(!empty($donnees->code) && !empty($donnees->description) && !empty($donnees->price) && !empty($donnees->category_id) && !empty($donnees->statut_id) && !empty($donnees->supplier_id) && !empty($donnees->purchase_date) && !empty($donnees->expiration_date)){
+    if(!empty($donnees->code) && !empty($donnees->description) && !empty($donnees->price) && !empty($donnees->statut_id) && !empty($donnees->supplier_id) && !empty($donnees->purchase_date) && !empty($donnees->expiration_date)){
         // On hydrate l'objet
         $produit->code = $donnees->code;
         $produit->description = $donnees->description;
         $produit->price = $donnees->price;
-        $produit->category_id = $donnees->category_id;
         $produit->statut_id = $donnees->statut_id;
         $produit->supplier_id = $donnees->supplier_id;
         $produit->purchase_date = $donnees->purchase_date;

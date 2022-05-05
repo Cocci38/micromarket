@@ -44,11 +44,10 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             extract($row);
 
             $prod = [
-                "id" => $id,
+                "id_produit" => $id_produit,
                 "code" => $code,
                 "description" => $description,
                 "price" => $price,
-                "category_id" => $category_id,
                 "statut_id" => $statut_id,
                 "supplier_id" => $supplier_id,
                 "purchase_date" => $purchase_date,

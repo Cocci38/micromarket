@@ -21,8 +21,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
     $donnees = json_decode(file_get_contents("php://input"));
 
-    if(!empty($donnees->id)){
-        $produit->id = $donnees->id;
+    if(!empty($donnees->id_produit)){
+        $produit->id_produit = $donnees->id_produit;
 
         // On récupère le produit
         $produit->readById();
@@ -31,11 +31,12 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         if($produit->code != null){
 
             $prod = [
-                "id" => $produit->id,
+                "id_produit" => $produit->id_produit,
                 "code" => $produit->code,
                 "description" => $produit->description,
                 "price" => $produit->price,
-                "category_id" => $produit->category_id,
+                // "name_category" => $produit->name_category,
+                // "name" => $produit->name,
                 "statut_id" => $produit->statut_id,
                 "supplier_id" => $produit->supplier_id,
                 "purchase_date" => $produit->purchase_date,

@@ -31,8 +31,8 @@ if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
     $donnees = json_decode(file_get_contents("php://input"));
 
     // On vérifie qu'on a bien toutes les données
-    if(!empty($donnees->id)){
-        $produit->id = $donnees->id;
+    if(!empty($donnees->id_produit)){
+        $produit->id_produit = $donnees->id_produit;
 
         if($produit->delete()){
             // Ici la suppression a fonctionné
