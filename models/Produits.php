@@ -14,6 +14,7 @@ class Produits{
     public $supplier_id;
     public $purchase_date;
     public $expiration_date;
+    public $name_category;
 
     public function __construct($db)
     {
@@ -32,6 +33,9 @@ class Produits{
         $this->supplier_id=htmlspecialchars(strip_tags($this->supplier_id));
         $this->purchase_date=htmlspecialchars(strip_tags($this->purchase_date));
         $this->expiration_date=htmlspecialchars(strip_tags($this->expiration_date));
+        $this->name_category=htmlspecialchars(strip_tags($this->name_category));
+
+error_log("cat :".print_r($this->name_category,1));
 
         // Ajout des données protégées : 
         $stmt->bindParam(":code", $this->code);
@@ -41,8 +45,24 @@ class Produits{
         $stmt->bindParam(":supplier_id", $this->supplier_id);
         $stmt->bindParam(":purchase_date", $this->purchase_date);
         $stmt->bindParam(":expiration_date", $this->expiration_date);
+        $stmt->execute();
 
-        if ($stmt->execute()) {
+        $produitId = $this->conn->lastInsertId();
+
+        $cat = $this->conn->prepare("SELECT id_category FROM category WHERE name_category LIKE :name_category");
+        $cat->bindParam(":name_category",  $this->name_category); 
+        $cat->execute();
+        $resultCat = $cat->fetch(PDO::FETCH_ASSOC);
+        extract($resultCat);
+        var_dump($this->name_category);
+        error_log(print_r($this->name_category,1));
+        var_dump($id_category);
+        $sql = $this->conn->prepare("INSERT INTO produit_category SET produit_id = :produit_id, category_id = :category_id");
+
+        $sql->bindParam(':produit_id', $produitId);
+        $sql->bindParam(':category_id', $id_category);
+
+        if ($sql->execute()) {
             return true;
         }
         return false;

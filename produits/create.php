@@ -42,6 +42,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         $produit->supplier_id = $donnees->supplier_id;
         $produit->purchase_date = $donnees->purchase_date;
         $produit->expiration_date = $donnees->expiration_date;
+        $produit->name_category = $donnees->name_category;
         
         if ($produit->create()) {
             // Ici la création a fonctionné
