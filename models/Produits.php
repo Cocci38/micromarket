@@ -15,6 +15,9 @@ class Produits{
     public $purchase_date;
     public $expiration_date;
     public $name_category;
+    public $name_statut;
+    public $name_supplier;
+    public $adresse_supplier;
 
     public function __construct($db)
     {
@@ -23,26 +26,42 @@ class Produits{
 
     public function create()
     {
+        $statut = $this->conn->prepare("SELECT 	id_statut  FROM statut WHERE name_statut LIKE :name_statut");
+        $statut->bindParam(":name_statut",  $this->name_statut); 
+        $statut->execute();
+        $resultstatut = $statut->fetch(PDO::FETCH_ASSOC);
+        extract($resultstatut);
+
+        $supplier = $this->conn->prepare("SELECT id_supplier  FROM suppliers WHERE name_supplier LIKE :name_supplier AND adresse_supplier LIKE :adresse_supplier");
+        $supplier->bindParam(":name_supplier",  $this->name_supplier);
+        $supplier->bindParam(":adresse_supplier",  $this->adresse_supplier);
+        $supplier->execute();
+        $resultsupplier = $supplier->fetch(PDO::FETCH_ASSOC);
+        extract($resultsupplier);
+        //error_log(print_r($resultsupplier,1));
+        //var_dump($resultsupplier); die();
+
         $stmt = $this->conn->prepare("INSERT INTO " . $this->table . " SET code=:code, description=:description, price=:price, statut_id=:statut_id, supplier_id=:supplier_id, purchase_date=:purchase_date, expiration_date=:expiration_date");
 
         // Protection contre les injections : 
         $this->code=htmlspecialchars(strip_tags($this->code));
         $this->description=htmlspecialchars(strip_tags($this->description));
         $this->price=htmlspecialchars(strip_tags($this->price));
-        $this->statut_id=htmlspecialchars(strip_tags($this->statut_id));
-        $this->supplier_id=htmlspecialchars(strip_tags($this->supplier_id));
+        $this->name_statut=htmlspecialchars(strip_tags($this->name_statut));
+        $this->name_supplier=htmlspecialchars(strip_tags($this->name_supplier));
+        $this->adresse_supplier=htmlspecialchars(strip_tags($this->adresse_supplier));
         $this->purchase_date=htmlspecialchars(strip_tags($this->purchase_date));
         $this->expiration_date=htmlspecialchars(strip_tags($this->expiration_date));
         $this->name_category=htmlspecialchars(strip_tags($this->name_category));
 
-error_log("cat :".print_r($this->name_category,1));
+//error_log("cat :".print_r($this->name_category,1));
 
         // Ajout des données protégées : 
         $stmt->bindParam(":code", $this->code);
         $stmt->bindParam(":description", $this->description);
         $stmt->bindParam(":price", $this->price);
-        $stmt->bindParam(":statut_id", $this->statut_id);
-        $stmt->bindParam(":supplier_id", $this->supplier_id);
+        $stmt->bindParam(":statut_id", $id_statut);
+        $stmt->bindParam(":supplier_id", $id_supplier);
         $stmt->bindParam(":purchase_date", $this->purchase_date);
         $stmt->bindParam(":expiration_date", $this->expiration_date);
         $stmt->execute();
@@ -55,8 +74,8 @@ error_log("cat :".print_r($this->name_category,1));
         $resultCat = $cat->fetch(PDO::FETCH_ASSOC);
         extract($resultCat);
         var_dump($this->name_category);
-        error_log(print_r($this->name_category,1));
-        var_dump($id_category);
+        // error_log(print_r($this->name_category,1));
+        // var_dump($id_category);
         $sql = $this->conn->prepare("INSERT INTO produit_category SET produit_id = :produit_id, category_id = :category_id");
 
         $sql->bindParam(':produit_id', $produitId);
