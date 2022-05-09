@@ -26,21 +26,28 @@ class Produits{
 
     public function create()
     {
+        // Je sélectionne l'id_statut grâce au nom pour ensuite l'insérer dans la table produits
         $statut = $this->conn->prepare("SELECT 	id_statut  FROM statut WHERE name_statut LIKE :name_statut");
-        $statut->bindParam(":name_statut",  $this->name_statut); 
+        $statut->bindParam(":name_statut",  $this->name_statut, PDO::PARAM_STR); 
         $statut->execute();
         $resultstatut = $statut->fetch(PDO::FETCH_ASSOC);
         extract($resultstatut);
 
+        // Je sélectionne l'id_supplier grâce au nom et l'adresse pour ensuite l'insérer dans la table produits
         $supplier = $this->conn->prepare("SELECT id_supplier  FROM suppliers WHERE name_supplier LIKE :name_supplier AND adresse_supplier LIKE :adresse_supplier");
-        $supplier->bindParam(":name_supplier",  $this->name_supplier);
-        $supplier->bindParam(":adresse_supplier",  $this->adresse_supplier);
+        $supplier->bindParam(":name_supplier",  $this->name_supplier, PDO::PARAM_STR);
+        $supplier->bindParam(":adresse_supplier",  $this->adresse_supplier, PDO::PARAM_STR);
         $supplier->execute();
         $resultsupplier = $supplier->fetch(PDO::FETCH_ASSOC);
+
+        /* extract() => Importe les variables dans la table des symboles. 
+            Vérifie chaque clé afin de contrôler si elle a un nom de variable valide. 
+            Elle vérifie également les collisions avec des variables existantes dans la table des symboles.*/
         extract($resultsupplier);
         //error_log(print_r($resultsupplier,1));
         //var_dump($resultsupplier); die();
 
+        // J'insère dans la table produits
         $stmt = $this->conn->prepare("INSERT INTO " . $this->table . " SET code=:code, description=:description, price=:price, statut_id=:statut_id, supplier_id=:supplier_id, purchase_date=:purchase_date, expiration_date=:expiration_date");
 
         // Protection contre les injections : 
@@ -57,29 +64,33 @@ class Produits{
 //error_log("cat :".print_r($this->name_category,1));
 
         // Ajout des données protégées : 
-        $stmt->bindParam(":code", $this->code);
-        $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":price", $this->price);
-        $stmt->bindParam(":statut_id", $id_statut);
-        $stmt->bindParam(":supplier_id", $id_supplier);
-        $stmt->bindParam(":purchase_date", $this->purchase_date);
-        $stmt->bindParam(":expiration_date", $this->expiration_date);
+        $stmt->bindParam(":code", $this->code, PDO::PARAM_STR);
+        $stmt->bindParam(":description", $this->description, PDO::PARAM_STR);
+        $stmt->bindParam(":price", $this->price, PDO::PARAM_INT);
+        $stmt->bindParam(":statut_id", $id_statut, PDO::PARAM_INT);
+        $stmt->bindParam(":supplier_id", $id_supplier, PDO::PARAM_INT);
+        $stmt->bindParam(":purchase_date", $this->purchase_date, PDO::PARAM_STR);
+        $stmt->bindParam(":expiration_date", $this->expiration_date, PDO::PARAM_STR);
         $stmt->execute();
 
+        // lastInsertId() => Retourne l'identifiant de la dernière ligne insérée ou la valeur d'une séquence
         $produitId = $this->conn->lastInsertId();
 
+        // Je sélectionne l'id_category grâce au nom pour ensuite l'insérer dans la table produit_category
         $cat = $this->conn->prepare("SELECT id_category FROM category WHERE name_category LIKE :name_category");
-        $cat->bindParam(":name_category",  $this->name_category); 
+        $cat->bindParam(":name_category",  $this->name_category, PDO::PARAM_STR); 
         $cat->execute();
         $resultCat = $cat->fetch(PDO::FETCH_ASSOC);
         extract($resultCat);
         var_dump($this->name_category);
         // error_log(print_r($this->name_category,1));
         // var_dump($id_category);
+
+        // // J'insère dans la table produit_category l'id du produit et l'id de la catégorie
         $sql = $this->conn->prepare("INSERT INTO produit_category SET produit_id = :produit_id, category_id = :category_id");
 
-        $sql->bindParam(':produit_id', $produitId);
-        $sql->bindParam(':category_id', $id_category);
+        $sql->bindParam(':produit_id', $produitId, PDO::PARAM_INT);
+        $sql->bindParam(':category_id', $id_category, PDO::PARAM_INT);
 
         if ($sql->execute()) {
             return true;
@@ -98,7 +109,7 @@ class Produits{
     {
         $stmt = $this->conn->prepare("SELECT * FROM produits WHERE id_produit = ?");
         // --JOIN category ON category_id = category.id  JOIN statut ON statut_id = statut.id 
-        $stmt->bindParam(1, $this->id_produit);
+        $stmt->bindParam(1, $this->id_produit, PDO::PARAM_INT);
         $stmt->execute();
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -129,14 +140,14 @@ class Produits{
         $this->id_produit=htmlspecialchars(strip_tags($this->id_produit));
 
         // Ajout des données protégées : 
-        $stmt->bindParam(":code", $this->code);
-        $stmt->bindParam(":description", $this->description);
-        $stmt->bindParam(":price", $this->price);
-        $stmt->bindParam(":statut_id", $this->statut_id);
-        $stmt->bindParam(":supplier_id", $this->supplier_id);
-        $stmt->bindParam(":purchase_date", $this->purchase_date);
-        $stmt->bindParam(":expiration_date", $this->expiration_date);
-        $stmt->bindParam(':id_produit', $this->id_produit);
+        $stmt->bindParam(":code", $this->code, PDO::PARAM_STR);
+        $stmt->bindParam(":description", $this->description, PDO::PARAM_STR);
+        $stmt->bindParam(":price", $this->price, PDO::PARAM_INT);
+        $stmt->bindParam(":statut_id", $this->statut_id, PDO::PARAM_INT);
+        $stmt->bindParam(":supplier_id", $this->supplier_id, PDO::PARAM_INT);
+        $stmt->bindParam(":purchase_date", $this->purchase_date, PDO::PARAM_STR);
+        $stmt->bindParam(":expiration_date", $this->expiration_date, PDO::PARAM_STR);
+        $stmt->bindParam(':id_produit', $this->id_produit, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             return true;
@@ -147,7 +158,7 @@ class Produits{
     {
         $stmt = $this->conn->prepare("DELETE FROM " . $this->table . " WHERE id_produit = ?");
         $this->id_produit=htmlspecialchars(strip_tags($this->id_produit));
-        $stmt->bindParam(1, $this->id_produit);
+        $stmt->bindParam(1, $this->id_produit, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             return true;
@@ -155,6 +166,4 @@ class Produits{
         return false;
     }
 }
-
-
 ?>
