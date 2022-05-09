@@ -61,7 +61,7 @@ class Produits{
         $this->expiration_date=htmlspecialchars(strip_tags($this->expiration_date));
         $this->name_category=htmlspecialchars(strip_tags($this->name_category));
 
-//error_log("cat :".print_r($this->name_category,1));
+        //error_log("cat :".print_r($this->name_category,1));
 
         // Ajout des données protégées : 
         $stmt->bindParam(":code", $this->code, PDO::PARAM_STR);
@@ -82,7 +82,7 @@ class Produits{
         $cat->execute();
         $resultCat = $cat->fetch(PDO::FETCH_ASSOC);
         extract($resultCat);
-        var_dump($this->name_category);
+
         // error_log(print_r($this->name_category,1));
         // var_dump($id_category);
 
@@ -100,14 +100,28 @@ class Produits{
 
     public function read()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM produits");
+        $stmt = $this->conn->prepare("SELECT code, description, price,name_category, name_statut, name_supplier, adresse_supplier, purchase_date, expiration_date FROM produits 
+        JOIN statut ON produits.statut_id = statut.id_statut
+        JOIN suppliers ON produits.supplier_id = suppliers.id_supplier
+        JOIN produit_category ON produits.id_produit = produit_category.produit_id
+        JOIN category ON produit_category.category_id = category.id_category");
         $stmt->execute();
         return $stmt; // Il n'a pas de fetch, il sera effectué dans le fichier de l'Api (read.php)
+
+        // $cat = $this->conn->prepare("SELECT name_category FROM category 
+        // JOIN produit_category ON produit_category.category_id = category.id_category
+        // WHERE produit_category.produit_id = ?");
+        // $cat->execute();
+        // return $cat;
     }
 
     public function readById()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM produits WHERE id_produit = ?");
+        $stmt = $this->conn->prepare("SELECT code, description, price,name_category, name_statut, name_supplier, adresse_supplier, purchase_date, expiration_date FROM produits 
+        JOIN statut ON produits.statut_id = statut.id_statut
+        JOIN suppliers ON produits.supplier_id = suppliers.id_supplier
+        JOIN produit_category ON produits.id_produit = produit_category.produit_id
+        JOIN category ON produit_category.category_id = category.id_category WHERE id_produit = ?");
         // --JOIN category ON category_id = category.id  JOIN statut ON statut_id = statut.id 
         $stmt->bindParam(1, $this->id_produit, PDO::PARAM_INT);
         $stmt->execute();
@@ -117,10 +131,10 @@ class Produits{
         $this->code = $result['code'];
         $this->description = $result['description'];
         $this->price = $result['price'];
-        // $this->name_category = $result['name_category'];
-        // $this->name = $result['name'];
-        $this->statut_id = $result['statut_id'];
-        $this->supplier_id = $result['supplier_id'];
+        $this->name_category = $result['name_category'];
+        $this->name_statut = $result['name_statut'];
+        $this->name_supplier = $result['name_supplier'];
+        $this->adresse_supplier = $result['adresse_supplier'];
         $this->purchase_date = $result['purchase_date'];
         $this->expiration_date = $result['expiration_date'];
     }

@@ -35,10 +35,10 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 "code" => $produit->code,
                 "description" => $produit->description,
                 "price" => $produit->price,
-                // "name_category" => $produit->name_category,
-                // "name" => $produit->name,
-                "statut_id" => $produit->statut_id,
-                "supplier_id" => $produit->supplier_id,
+                "name_category" => $produit->name_category,
+                "name_statut" => $produit->name_statut,
+                "name_supplier" => $produit->name_supplier,
+                "adresse_supplier" => $produit->adresse_supplier,
                 "purchase_date" => $produit->purchase_date,
                 "expiration_date" => $produit->expiration_date
             ];
