@@ -35,17 +35,11 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
     $donnees = json_decode(file_get_contents("php://input"));
 
     // On vérifie qu'on a bien toutes les données
-    if(!empty($donnees->id_produit) && !empty($donnees->code) && !empty($donnees->description) && !empty($donnees->price) && !empty($donnees->statut_id) && !empty($donnees->supplier_id) && !empty($donnees->purchase_date) && !empty($donnees->expiration_date)){
+    if(!empty($donnees->id_produit) && !empty($donnees->name_statut)){
 
         // On hydrate l'objet
         $produit->id_produit = $donnees->id_produit;
-        $produit->code = $donnees->code;
-        $produit->description = $donnees->description;
-        $produit->price = $donnees->price;
-        $produit->statut_id = $donnees->statut_id;
-        $produit->supplier_id = $donnees->supplier_id;
-        $produit->purchase_date = $donnees->purchase_date;
-        $produit->expiration_date = $donnees->expiration_date;
+        $produit->name_statut = $donnees->name_statut;
 
         if($produit->update()){
             // Ici la modification a fonctionné

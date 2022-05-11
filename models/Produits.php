@@ -141,28 +141,24 @@ class Produits{
 
     public function update()
     {
-        $stmt = $this->conn->prepare("UPDATE " . $this->table . " SET code = :code, description = :description, price = :price, statut_id = :statut_id, supplier_id = :supplier_id, purchase_date = :purchase_date, expiration_date = :expiration_date WHERE id_produit = :id_produit");
+        // Je sélectionne l'id_statut grâce au nom pour ensuite l'insérer dans la table produits
+        $statut = $this->conn->prepare("SELECT 	id_statut  FROM statut WHERE name_statut LIKE :name_statut");
+        $statut->bindParam(":name_statut",  $this->name_statut, PDO::PARAM_STR); 
+        $statut->execute();
+        $resultstatut = $statut->fetch(PDO::FETCH_ASSOC);
+        extract($resultstatut);
+        //var_dump($id_statut); die();
+
+        $stmt = $this->conn->prepare("UPDATE " . $this->table . " SET statut_id = :statut_id WHERE id_produit = :id_produit");
 
         // Protection contre les injections : 
-        $this->code=htmlspecialchars(strip_tags($this->code));
-        $this->description=htmlspecialchars(strip_tags($this->description));
-        $this->price=htmlspecialchars(strip_tags($this->price));
-        $this->statut_id=htmlspecialchars(strip_tags($this->statut_id));
-        $this->supplier_id=htmlspecialchars(strip_tags($this->supplier_id));
-        $this->purchase_date=htmlspecialchars(strip_tags($this->purchase_date));
-        $this->expiration_date=htmlspecialchars(strip_tags($this->expiration_date));
-        $this->id_produit=htmlspecialchars(strip_tags($this->id_produit));
+        $this->name_statut=htmlspecialchars(strip_tags($this->name_statut));
+        //$this->id_produit=htmlspecialchars(strip_tags($this->id_produit));
 
         // Ajout des données protégées : 
-        $stmt->bindParam(":code", $this->code, PDO::PARAM_STR);
-        $stmt->bindParam(":description", $this->description, PDO::PARAM_STR);
-        $stmt->bindParam(":price", $this->price, PDO::PARAM_INT);
-        $stmt->bindParam(":statut_id", $this->statut_id, PDO::PARAM_INT);
-        $stmt->bindParam(":supplier_id", $this->supplier_id, PDO::PARAM_INT);
-        $stmt->bindParam(":purchase_date", $this->purchase_date, PDO::PARAM_STR);
-        $stmt->bindParam(":expiration_date", $this->expiration_date, PDO::PARAM_STR);
-        $stmt->bindParam(':id_produit', $this->id_produit, PDO::PARAM_INT);
-
+        $stmt->bindParam(":statut_id", $id_statut, PDO::PARAM_INT);
+        $stmt->bindParam(":id_produit", $this->id_produit, PDO::PARAM_INT);
+        //var_dump($stmt); die();
         if ($stmt->execute()) {
             return true;
         }
