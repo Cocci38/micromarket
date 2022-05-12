@@ -106,6 +106,7 @@ class Produits{
         JOIN produit_category ON produits.id_produit = produit_category.produit_id
         JOIN category ON produit_category.category_id = category.id_category");
         $stmt->execute();
+        //var_dump($stmt);
         return $stmt; // Il n'a pas de fetch, il sera effectué dans le fichier de l'Api (read.php)
 
         // $cat = $this->conn->prepare("SELECT name_category FROM category 
@@ -128,15 +129,15 @@ class Produits{
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Hydradation
-        $this->code = $result['code'];
-        $this->description = $result['description'];
-        $this->price = $result['price'];
-        $this->name_category = $result['name_category'];
-        $this->name_statut = $result['name_statut'];
-        $this->name_supplier = $result['name_supplier'];
-        $this->adresse_supplier = $result['adresse_supplier'];
-        $this->purchase_date = $result['purchase_date'];
-        $this->expiration_date = $result['expiration_date'];
+        // $this->code = $result['code'];
+        // $this->description = $result['description'];
+        // $this->price = $result['price'];
+        // $this->name_category = $result['name_category'];
+        // $this->name_statut = $result['name_statut'];
+        // $this->name_supplier = $result['name_supplier'];
+        // $this->adresse_supplier = $result['adresse_supplier'];
+        // $this->purchase_date = $result['purchase_date'];
+        // $this->expiration_date = $result['expiration_date'];
     }
 
     public function update()
@@ -158,7 +159,7 @@ class Produits{
         // Ajout des données protégées : 
         $stmt->bindParam(":statut_id", $id_statut, PDO::PARAM_INT);
         $stmt->bindParam(":id_produit", $this->id_produit, PDO::PARAM_INT);
-        //var_dump($stmt); die();
+
         if ($stmt->execute()) {
             return true;
         }
@@ -175,5 +176,33 @@ class Produits{
         }
         return false;
     }
+
+    public function duplicate($COPY)
+    {
+        extract($COPY);
+        //var_dump($COPY);
+        // $duplic = $this->conn->prepare("SELECT code, description, price, statut_id, supplier_id, purchase_date, expiration_date FROM produits WHERE id_produit = ?");
+        // $duplic->bindParam(1, $this->id_produit, PDO::PARAM_INT); 
+        // $duplic->execute();
+        // $resultduplic = $duplic->fetch(PDO::FETCH_ASSOC);
+        // extract($resultduplic);
+        //var_dump($resultduplic);die();
+
+        $insertduplic = $this->conn->prepare("INSERT INTO produits code, description, price, statut_id, supplier_id, purchase_date, expiration_date VALUES ($code, $description, $price, $statut_id, $supplier_id, $purchase_date, $expiration_date) ON DUPLICATE KEY UPDATE id_produit = id_produit + 1");
+        // $insertduplic->bindParam(":code", $this->code, PDO::PARAM_STR);
+        // $insertduplic->bindParam(":description", $this->description, PDO::PARAM_STR);
+        // $insertduplic->bindParam(":price", $this->price, PDO::PARAM_INT);
+        // $insertduplic->bindParam(":statut_id", $id_statut, PDO::PARAM_INT);
+        // $insertduplic->bindParam(":supplier_id", $id_supplier, PDO::PARAM_INT);
+        // $insertduplic->bindParam(":purchase_date", $this->purchase_date, PDO::PARAM_STR);
+        // $insertduplic->bindParam(":expiration_date", $this->expiration_date, PDO::PARAM_STR);
+        //$insertduplic->execute();
+
+        //var_dump($insertduplic);die();
+        if ($insertduplic->execute()) {
+            return true;
+        }
+        return false;
+}
 }
 ?>

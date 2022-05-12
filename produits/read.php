@@ -58,7 +58,6 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
             $tableauProduits['produits'][] = $prod;
         }
-
         // On envoie le code réponse 200 OK
         http_response_code(200);
 
